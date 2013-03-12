@@ -41,20 +41,13 @@ var Proto = {
     /**
      * Class method: subclass "this" (a prototype object used as a class)
      * @param  {object} subProps The properties of the sub-prototype
-     * @param  {array}  statics  An array of static members to add in the following format (note that static member values CAN be functions): [ { name: "memberName", value: theValue}, ... ]
      * @return {object} The new  prototype
      */
-    extend: function (subProps, statics) {
+    extend: function (subProps) {
         // We cannot set the prototype of "subProps"
         // => copy its contents to a new object that has the right prototype
         var subProto = Object.create(this, Object.getOwnPropertyDescriptors(subProps));
         subProto.super = this; // for super-calls
-        
-        if (statics && statics.splice) {
-            for(var i=0, l=statics.length; i<l; ++i) {
-                subProto[statics[i].name] = statics[i].value;
-            }
-        }
         return subProto;
     },
 };
