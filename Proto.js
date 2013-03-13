@@ -13,7 +13,9 @@ if (!Object.getOwnPropertyDescriptors) {
     Object.getOwnPropertyDescriptors = function (obj) {
         var descs = {};
         for (var propName in Object.getOwnPropertyNames(obj)) {
-            descs[propName] = Object.getOwnPropertyDescriptor(obj, propName);
+            if (Object.getOwnPropertyDescriptor(obj, propName)) {
+                descs[propName] = Object.getOwnPropertyDescriptor(obj, propName);
+            }
         }
         return descs;
     };
