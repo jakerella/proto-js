@@ -12,10 +12,9 @@ if (!Object.create) {
 if (!Object.getOwnPropertyDescriptors) {
     Object.getOwnPropertyDescriptors = function (obj) {
         var descs = {};
-        for (var propName in Object.getOwnPropertyNames(obj)) {
-            if (Object.getOwnPropertyDescriptor(obj, propName)) {
-                descs[propName] = Object.getOwnPropertyDescriptor(obj, propName);
-            }
+        var pNames = Object.getOwnPropertyNames(obj);
+        for (var i=0, l=pNames.length; i<l; ++i) {
+            descs[pNames[i]] = Object.getOwnPropertyDescriptor(obj, pNames[i]);
         }
         return descs;
     };
