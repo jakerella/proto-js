@@ -66,7 +66,7 @@ Function.prototype.extend = function(subProps) {
 
 ////////// Demo //////////
 
-//***** Code *****
+/***** Code *****
 // Superclass
 var Person = Proto.extend({
     constructor: function (name) {
@@ -87,7 +87,7 @@ var Employee = Person.extend({
         return Employee.super.describe.call(this)+" ("+this.title+")";
     },
 });
-//*/
+*/
 
 /***** Interaction *****
 var jane = Employee.new("Jane", "CTO"); // normally: new Employee(...)
