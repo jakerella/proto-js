@@ -22,7 +22,7 @@ if (!Object.getOwnPropertyDescriptors) {
 
 /**
  * The root of all classes that adhere to "the prototypes as classes" protocol.
- * The neat thing is that the class methods "new" and "extend" are automatically
+ * The neat thing is that the class methods "create" and "extend" are automatically
  * inherited by subclasses of this class (because Proto is in their prototype chain).
  */
 var Proto = {
@@ -31,7 +31,7 @@ var Proto = {
      * "this" is the prototype of the new instance.
      * @return {object} An instance of the desired prototype
      */
-    new: function () {
+    create: function () {
         var instance = Object.create(this);
         if (instance.constructor) {
             instance.constructor.apply(instance, arguments);
@@ -42,15 +42,15 @@ var Proto = {
     /**
      * Class method: subclass "this" (a prototype object used as a class)
      * @param  {object} subProps The properties of the sub-prototype
-     * @return {object} The new  prototype
+     * @return {object} The new prototype
      */
     extend: function (subProps) {
         // We cannot set the prototype of "subProps"
         // => copy its contents to a new object that has the right prototype
         var subProto = Object.create(this, Object.getOwnPropertyDescriptors(subProps));
-        subProto.super = this; // for super-calls
+        subProto.parent = this; // for parent prototype calls
         return subProto;
-    },
+    }
 };
 
 /**
@@ -81,17 +81,17 @@ var Person = Proto.extend({
 // Subclass
 var Employee = Person.extend({
     constructor: function (name, title) {
-        Employee.super.constructor.call(this, name);
+        Employee.parent.constructor.call(this, name);
         this.title = title;
     },
     describe: function () {
-        return Employee.super.describe.call(this)+" ("+this.title+")";
+        return Employee.parent.describe.call(this)+" ("+this.title+")";
     },
 });
 */
 
 /***** Interaction *****
-var jane = Employee.new("Jane", "CTO"); // normally: new Employee(...)
+var jane = Employee.create("Jane", "CTO"); // normally: new Employee(...)
 > Employee.isPrototypeOf(jane) // normally: jane instanceof Employee
 true
 > jane.describe()
