@@ -1,15 +1,15 @@
 
 // ---------------- Test Modules --------------- //
 
-module("Basic Tests");
-
 test("Basic Object Creation", function(a) {
+  var cf = function () { };
   var Person = Proto.extend({
-    constructor: function () { }
+    constructor: cf
   });
 
   a.ok(Person, "Person object has been created");
   a.equal(Person.__proto__, Proto, "Person has correct prototype");
+  a.equal(Person.constructor, cf, "Person object has correct constructor");
 });
 
 test("Object Creation with Members", function(a) {
@@ -32,7 +32,7 @@ test("Instance Creation", function(a) {
     sayHello: function() { return "Hello "+this.name; }
   });
 
-  var p = Person.new();
+  var p = Person.create();
 
   a.ok(Person.isPrototypeOf(p), "Person is a prototype of the instance");
   a.equal(p.name, "Bubbles", "instance has correct 'name' value");
@@ -49,7 +49,7 @@ test("Constructor arguments", function(a) {
     sayHello: function() { return "Hello "+this.name; }
   });
 
-  var p = Person.new("Jordan", true);
+  var p = Person.create("Jordan", true);
 
   a.equal(p.name, "Jordan", "Person has correct 'name' value");
   a.equal(p.alive, true, "Person has correct 'alive' value");
@@ -70,8 +70,8 @@ test("Basic Object Inheritance", function(a) {
   a.ok(Employee, "Employee object has been created");
   a.equal(Employee.id, null, "Employee has correct default 'id' value");
   a.equal(Employee.__proto__, Person, "Employee has correct prototype");
-  a.equal(Employee.super, Person, "Employee has correct 'super' object: Person");
-  a.equal(Employee.super.name, "Bubbles", "Employee.super has correct default value for 'name'");
+  a.equal(Employee.parent, Person, "Employee has correct 'parent' object: Person");
+  a.equal(Employee.parent.name, "Bubbles", "Employee.parent has correct default value for 'name'");
 });
 
 test("Inherited Instance Creation", function(a) {
@@ -85,7 +85,7 @@ test("Inherited Instance Creation", function(a) {
     id: null
   });
 
-  var e = Employee.new();
+  var e = Employee.create();
 
   a.ok(Employee.isPrototypeOf(e), "Employee is a prototype of the instance");
   a.ok(Person.isPrototypeOf(e), "Person is a prototype of the instance");
@@ -93,7 +93,7 @@ test("Inherited Instance Creation", function(a) {
   a.equal(e.name, "Bubbles", "instance has correct 'name' value");
 });
 
-test("Inherited Instance with 'super' Constructor", function(a) {
+test("Inherited Instance with 'parent' Constructor", function(a) {
   var Person = Proto.extend({
     constructor: function (name) {
       this.name = name;
@@ -103,13 +103,13 @@ test("Inherited Instance with 'super' Constructor", function(a) {
 
   var Employee = Person.extend({
     constructor: function(name, id) {
-      Employee.super.constructor.call(this, name);
+      Employee.parent.constructor.call(this, name);
       this.id = id;
     },
     id: null
   });
 
-  var e = Employee.new("Jordan", 1234);
+  var e = Employee.create("Jordan", 1234);
 
   a.equal(e.id, 1234, "instance has correct 'id' value");
   a.equal(e.name, "Jordan", "instance has correct 'name' value");

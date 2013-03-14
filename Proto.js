@@ -1,25 +1,5 @@
 ////////// API //////////
 
-// To be part of ECMAScript.next
-if (!Object.create) {
-  Object.create = function(o) {
-    function F(){}
-    F.prototype = o;
-    return new F();
-  };
-}
-
-if (!Object.getOwnPropertyDescriptors) {
-    Object.getOwnPropertyDescriptors = function (obj) {
-        var descs = {};
-        var pNames = Object.getOwnPropertyNames(obj);
-        for (var i=0, l=pNames.length; i<l; ++i) {
-            descs[pNames[i]] = Object.getOwnPropertyDescriptor(obj, pNames[i]);
-        }
-        return descs;
-    };
-}
-
 /**
  * The root of all classes that adhere to "the prototypes as classes" protocol.
  * The neat thing is that the class methods "create" and "extend" are automatically
@@ -49,6 +29,9 @@ var Proto = {
         // => copy its contents to a new object that has the right prototype
         var subProto = Object.create(this, Object.getOwnPropertyDescriptors(subProps));
         subProto.parent = this; // for parent prototype calls
+        // Does the browser not support __proto__? Then add it manually
+        // (Yes, this is also in our shim, but some browsers have Object.create and not __proto__ - IE9)
+        if (!({}).__proto__) { subProto.__proto__ = this; }
         return subProto;
     }
 };
