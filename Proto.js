@@ -29,10 +29,58 @@ var Proto = {
         // => copy its contents to a new object that has the right prototype
         var subProto = Object.create(this, Object.getOwnPropertyDescriptors(subProps));
         subProto.parent = this; // for parent prototype calls
+        
         // Does the browser not support __proto__? Then add it manually
         // (Yes, this is also in our shim, but some browsers have Object.create and not __proto__ - IE9)
         if (!({}).__proto__) { subProto.__proto__ = this; }
+
         return subProto;
+    },
+
+    // Add a dynamic parent method call
+    // Note that this is not the most efficient manner of doing this
+    callParent: function() {
+      var m = null;
+
+      // Try to get calling method from whatever means possible...
+      // NOTE: to make this more efficient, give your object methods a name!
+      // var Person = Proto.extend({
+      //   constructor: function constructor() { },
+      //   getSpecies: function getSpecies() { return "Homo Sapien"; }
+      // });
+      
+      if (arguments.callee.caller && arguments.callee.caller.name) {
+        m = arguments.callee.caller.name;
+      } else if (arguments.caller && arguments.caller.name) {
+        m = arguments.caller.name;
+      } else {
+        // Unable to get calling method any other way, so try the call stack (least efficient)
+        // First, find correct line, should be 3 down
+        var caller = (new Error()).stack.split(/at/).slice(2,3)[0].match(/\s*([^\(\s]+)/);
+        if (caller) {
+          // If we found the correct line, see if we have a prototype and method name in there
+          // should be in the form: BaseProto.CurrentProto.methodName
+          caller = caller[1].match(/\.([^\s\.]+)$/);
+          if (caller) { m = caller[1]; }
+        }
+      }
+
+      // Call the parent method with correct context and arguments if it exists on the parent
+      // Note that this will look up the chain if the parent doesn't have it directly
+      if (typeof this.parent[m] == 'function') {
+        // we need to split out the arguments
+        var args = [];
+        // is the first (and only) argument an Arguments array?
+        if (arguments.length === 1 && arguments[0].callee) {
+          args = args.concat(Array.prototype.slice.call(arguments[0]));
+        } else { // if not, just add all arguments normally
+          args = args.concat(Array.prototype.slice.call(arguments));
+        }
+        return this.parent[m].apply(this, args);
+      }
+      // If the parent method does not exist we will return undefined versus throwing an error
+      // making this call safe if there is no parent method
+      return undefined;
     }
 };
 
