@@ -1,3 +1,8 @@
+/* Copyright (c) 2012 Axel Rauschmayer
+ * Licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
+ * Copyright notice and license must remain intact for legal use
+ */
+ 
 ////////// API //////////
 
 /**
